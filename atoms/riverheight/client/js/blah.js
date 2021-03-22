@@ -1,6 +1,6 @@
 import * as d3 from "d3"
 
-export function radial(results, type, chartId, animationSpeed) {
+function init(results) {
 
 	var isMobile;
 	var windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -13,17 +13,14 @@ export function radial(results, type, chartId, animationSpeed) {
 			isMobile = false;
 	}
 
-	console.log(`.${type} #graphicContainer`)
-
-	var width = document.querySelector(`.${type} #graphicContainer`).getBoundingClientRect().width
-	
+	var width = document.querySelector("#graphicContainer").getBoundingClientRect().width
 	if (width > 620) {
 		width = 620
 	}
 	var height = width			
 	var margin = {top: 20, right: 20, bottom: 20, left: 20}
 
-	var context = d3.select(`.${type} #outer-wrapper`)
+	var context = d3.select("#rainGraph1")
 
 	width = width,
     height = width;
@@ -32,20 +29,10 @@ export function radial(results, type, chartId, animationSpeed) {
 	var dateParse = d3.timeParse("%Y-%m-%d")
 	
 	results.forEach(d => {
-		if (typeof d.date == 'string') {
-			d.date = dateParse(d.date)
-		}
-		
+		d.date = dateParse(d.date)
 		d.year = +d.year
-		if (type == 'river') {
-			d.rainfall = +d.Max
-		}
-
-		else {
-			d.rainfall = +d.rainfall
-		}
-		
-		
+		d.rainfall = +d.Max
+		// d.rainfall = +d.rainfall
 	})
 
 
@@ -55,9 +42,8 @@ export function radial(results, type, chartId, animationSpeed) {
 	var startYear = results[0].year
 
 	var data = d3.group(results, d => d.year)
-	// chartKey.html("");
-
-	context.select("#graphicContainer svg").remove();
+	console.log(data.get(2021))
+	chartKey.html("");
 
 	var svg = context.select("#graphicContainer").append("svg")
 				.attr("viewBox", [-width / 2, -height / 2, width, height])
@@ -84,36 +70,7 @@ export function radial(results, type, chartId, animationSpeed) {
 		.attr("y", 0)
 		.attr("id", "counter")
 		.attr("text-anchor", "middle")
-		.attr("fill","#d61d00")
 		.text(startYear)    
-
-	var units = (type === 'river') ? "m" : "mm" 	
-
-	var replay = svg.append("rect")
-		.attr("x", -25)
-		.attr("y", 20)
-		.attr("rx", 10)
-		.attr("ry", 10)
-		.attr("width", 50)
-		.attr("height", 25)
-		.attr("opacity", 0)
-		.attr("fill", "grey")
-		.style("cursor", "pointer")
-		.attr("id", "replay")
-		.attr("class", "replay")
-		.on("click", animationRestart)
-	
-	svg.append("text")
-		.attr("x", 0)
-		.attr("y", 35)
-		.attr("text-anchor", "middle")
-		.attr("fill", "#FFF")
-		.style("pointer-events", "none")
-		.attr("opacity", 0)
-		.attr("class", "replay")
-		.text("replay")
-
-	context.selectAll(".replay").attr("opacity",0)	
 
 	var xAxis = g => g
     .attr("font-family", "sans-serif")
@@ -162,7 +119,7 @@ export function radial(results, type, chartId, animationSpeed) {
             .attr("dy", "0.35em")
             .attr("stroke", "#fff")
             .attr("stroke-width", 5)
-            .text((x, i) => `${x.toFixed(0)}${i ? "" : units}`)
+            .text((x, i) => `${x.toFixed(0)}${i ? "" : "mm"}`)
           .clone(true)
             .attr("y", d => y(d))
           .selectAll(function() { return [this, this.previousSibling]; })
@@ -179,22 +136,58 @@ export function radial(results, type, chartId, animationSpeed) {
     		return y(d.rainfall)
     	})
 
+  	var animationSpeed = 200
+	var currentYear = startYear
+
+	// var counter = context.select("#counter")
+	var limit = 2021
+
+  	function animate(t) {
+
+		if (currentYear >= limit) {
+			console.log("stop")
+			// counter.text(2021)
+			interval.stop()	   
+		}
+			drawLine()
+			counter.text(currentYear)
+			currentYear++
+	}
+
+	function animationRestart() {
+		console.log("pause")
+		
+		monthText.text("Replaying")
+
+		var t = d3.timer(function(elapsed) {
+			monthText.text("Paused")
+		  	yearText.text(10 - Math.round(elapsed/1000))
+		  	// console.log(elapsed)
+		  	if (elapsed > 10000)
+
+		  	{
+		  		t.stop()
+		  		currentDate = moment(startDateStr, 'YYYY-MM-DD');
+				interval.restart(animate, animationSpeed)
+		  	} 
+		}, 1000);
+	}	
+
 	function drawLine() {
+
 
 		if (currentYear != 2021) {
 			lines.append("path")
-		  		.datum(data.get(currentYear))
-			      .attr("fill", "none")
-			      .attr("stroke", "red")
-			      .attr("stroke-width", 2)
-			      .attr("class", "yearLine")
-			      .attr("opacity", 1)
-			      .attr("data-year", currentYear)
-			      .attr("d", line)
-			      .transition()
-						.duration(800)
-						.attr("stroke", "#c6dbef")
-						.attr("opacity", 0.5)
+	  		.datum(data.get(currentYear))
+		      .attr("fill", "none")
+		      .attr("stroke", "red")
+		      .attr("stroke-width", 2)
+		      .attr("opacity", 1)
+		      .attr("d", line)
+		      .transition()
+					.duration(300)
+					.attr("stroke", "lightgrey")
+					.attr("opacity", 0.5)
 		}
 		
 		else {
@@ -202,80 +195,16 @@ export function radial(results, type, chartId, animationSpeed) {
 		  		.datum(data.get(2021))
 			      .attr("fill", "none")
 			      .attr("stroke", "red")
-			      .attr("class", "yearLine")
-			      .attr("id", "currentYear")
 			      .attr("stroke-width", 2)
 			      .attr("d", line)
 		}
 
 
 	}
-
-  function fadeIn(selection) {
-    	console.log(selection)
-    
- 
- }
-
-   function fadeOut(selection) {
-    	console.log(selection)
-    	context.selectAll(".yearLine").transition("fade1", 500).attr("stroke", "#c6dbef")
-    	selection.transition("fade2", 500).attr("stroke", "red")
- 
- }
 	
-var interval = d3.interval(animate, animationSpeed);
+	var interval = d3.interval(animate, animationSpeed);
   	
-// var animationSpeed = 200
-var currentYear = startYear
-
-// var counter = context.select("#counter")
-var limit = 2021
-
-function animate(t) {
-
-if (currentYear >= limit) {
-	console.log("stop")
-	
-	context.selectAll(".replay").transition().attr("opacity",1)
-
-	context.selectAll(".yearLine")
-		.on('mouseover', function() {
-					console.log(d3.select(this).data()[0][0].year)
-		      		context.selectAll(".yearLine").attr("stroke", "#c6dbef").attr("opacity", 0.5)
-    				d3.select(this).attr("stroke", "red").attr("opacity", 1).raise()
-    				
-    				counter.text(d3.select(this).data()[0][0].year)
-
-		      })
-	  	.on('mouseout', function() {
-	  		d3.select(this).attr("stroke", "#c6dbef").attr("opacity", 0.5)
-	  		context.select("#currentYear").attr("stroke", "red").attr("opacity", 1).raise()
-	  		counter.text(2021)
-	  	})
-
-	// counter.text(2021)
-	interval.stop()	   
-}
-	console.log("tick")
-	drawLine()
-	counter.text(currentYear)
-	currentYear++
-}
-
-function animationRestart() {
-	console.log("restarting", startYear)
-	context.selectAll(".replay").attr("opacity",0)
-	currentYear = startYear
-	interval.stop()
-
-	context.selectAll(".yearLine").remove()
-
-	interval = d3.interval(animate, animationSpeed)
-
-}	
-
-
+  	
 
   svg.append("g")
       .call(xAxis);
@@ -283,4 +212,26 @@ function animationRestart() {
   svg.append("g")
       .call(yAxis);    
 
+
+
 } // end init
+
+Promise.all([
+	d3.csv(`<%= path %>/penrith.csv`)
+	])
+	.then((results) =>  {
+		init(results[0])
+		// var to=null
+		// var lastWidth = document.querySelector("#graphicContainer").getBoundingClientRect()
+		// window.addEventListener('resize', function() {
+		// 	var thisWidth = document.querySelector("#graphicContainer").getBoundingClientRect()
+		// 	if (lastWidth != thisWidth) {
+		// 		window.clearTimeout(to);
+		// 		to = window.setTimeout(function() {
+		// 			    init(results[0])
+		// 			}, 100)
+		// 	}
+		
+		// })
+
+	});

@@ -9,11 +9,14 @@
 
     #graphicContainer {
     	position: relative;
+    	min-height:400px;
+
     }
 
 
     	#counter {
     		font-size: 2em;
+    		font-weight: bold;
     	}
     
 
@@ -23,6 +26,37 @@
 	  stroke: #767676;
 	  shape-rendering: crispEdges;
 	}
+
+	  #loadingContainer {
+    	text-align: center;
+    	width:auto;
+        margin-left:5px;        
+        border-radius: 16px;
+        text-align: center;
+        padding: 5px 10px;
+        font-size: 16px;
+        color:#FFFFFF;
+        background-color: #bdbdbd;
+        display: inline-block;
+        position: absolute;
+        left:49%;
+        top:20%;
+    }
+
+    #replayButton {
+    	text-align: center;
+    	width:auto;
+        margin-left:5px;        
+        border-radius: 16px;
+        text-align: center;
+        padding: 5px 10px;
+        font-size: 14px;
+        color:#FFFFFF;
+        background-color: #bdbdbd;
+        position: absolute;
+        left:45%;
+        top:50%;
+    }
 
 	.lineLabels {
 		font-weight: bold;
@@ -36,7 +70,7 @@
 	    -webkit-font-smoothing: antialiased;
 	    color: #333333;
 	    font-family: "Guardian Headline Full", Georgia, serif;
-	    margin-bottom: 2px;
+	    margin-bottom: 10px;
 	}
 
 	a {
@@ -56,6 +90,7 @@
 	    line-height: 20px;
 	    color: #333333;
 	    font-family: "Guardian Egyptian Web", Georgia, serif;
+	    margin-bottom: 20px;
 	}
 
 	.footer {

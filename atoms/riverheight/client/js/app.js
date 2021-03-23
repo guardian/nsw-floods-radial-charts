@@ -1,14 +1,14 @@
 import { radial } from "shared/js/radial";
 import * as d3 from "d3"
 
-var selected = 'penrith'
-var animationSpeed = 200
+var selected = 'pm-river'
+var animationSpeed = 500
 
 Promise.all([
-	d3.csv(`<%= path %>/penrith.csv`)
+	d3.csv(`<%= path %>/pm-river.csv`)
 	])
 	.then((results) =>  {
-		radial(results[0], 'river', 'penrith', 200)
+		radial(results[0], 'river', selected, animationSpeed)
 		d3.select("#loadingContainer").style("display","none")
 	});
 
@@ -27,8 +27,8 @@ var lastWidth = document.querySelector(".river #graphicContainer").getBoundingCl
 // 	})
 
 var rivers = [
-{"id":"penrith", "text":"Nepean, Penrith", "title":"Nepean River at Penrith: 2021 flood height vs historic heights", "subtitle":"Yep", "animationSpeed":200},
-{"id":"pm-river", "text":"Hastings, Port Macquarie", "title":"Hastings River at Port Macquarie: 2021 flood height vs historic heights", "subtitle":"Yep", "animationSpeed":200},
+{"id":"pm-river", "text":"Hastings, Port Macquarie", "title":"Hastings River at Port Macquarie: 2021 flood height vs historic heights", "subtitle":"Yep", "animationSpeed":400},
+{"id":"penrith", "text":"Nepean, Penrith", "title":"Nepean River at Penrith: 2021 flood height vs historic heights", "subtitle":"Yep", "animationSpeed":300},
 {"id":"wingham", "text":"Manning, Wingham", "title":"Manning River at Wingham: 2021 flood height vs historic heights", "subtitle":"Yep", "animationSpeed":1000},
 {"id":"north-richmond", "text":"Hawkesbury, Richmond", "title":"Hawkesbury River at North Richmond: 2021 flood height vs historic heights", "subtitle":"Yep", "animationSpeed":300},
 {"id":"kempsey", "text":"Macleay, Kempsey", "title":"Macleay River at Kempsey: 2021 flood height vs historic heights", "subtitle":"Yep", "animationSpeed":300},
@@ -36,11 +36,9 @@ var rivers = [
 var selector = d3.select(".river #riverSelector")
 
 rivers.forEach(function (d) {
-
 		selector.append("option")
 			.attr("value",d.id)
 			.text(d.text)	
-	
 })
 
 
@@ -50,8 +48,8 @@ selector.on("change", function() {
 		var currentRiver = rivers.find(d => d.id == selected)
 		animationSpeed = currentRiver['animationSpeed']
 		
-		d3.select(".river #chartTitle").text(currentRiver.title)
-		d3.select(".river #subTitle").text(currentRiver.subtitle)
+		// d3.select(".river #chartTitle").text(currentRiver.title)
+		// d3.select(".river #subTitle").text(currentRiver.subtitle)
 
 		console.log(selected, animationSpeed)
 

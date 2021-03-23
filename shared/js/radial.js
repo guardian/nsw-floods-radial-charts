@@ -269,6 +269,12 @@ function animationRestart() {
 	currentYear = startYear
 	interval.stop()
 
+	// setTimeout(function() {
+	// 	context.selectAll(".yearLine").remove()
+
+	// 	interval = d3.interval(animate, animationSpeed)
+
+	// }, 2000)
 	context.selectAll(".yearLine").remove()
 
 	interval = d3.interval(animate, animationSpeed)

@@ -2,9 +2,11 @@
     <div id="outer-wrapper" class="showcase">
 			<div class="row">
 
-			<div class='figureTitle' id="chartTitle"></div>
-			<div class='subTitle' id="subTitle"></div>
-			<div class='notes' id='chartKey'></div>
+			<div class='figureTitle' id="chartTitle">2021 floods: daily rainfall v historical rainfall</div>
+			<div class='subTitle' id="subTitle">Showing daily rainfall totals for 2021 overlaid with values from previous years. Hover or tap lines to highlight other years</div>
+			<div class='notes' id='chartKey'>
+				Currently showing: <select id="rainSelector"></select>	
+			</div>
 			
 			</div>
 			<div class="row borderBottom chartSans" id="graphicContainer">	
@@ -15,7 +17,7 @@
 
 				</div>	
 				
-				<span id="footnote"></span> Guardian graphic <span id="sourceText"></span>
+				<span id="footnote">Combines data from BoM sites: 060168, 060139 and 60026.</span> Guardian graphic <span id="sourceText">| Source: Bureau of Meteorology</span>
 			</div>	
 			
 	</div>
